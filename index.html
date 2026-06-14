@@ -82,6 +82,7 @@ header p {
   align-items: center;
   justify-content: center;
   z-index: 2;
+  cursor: pointer;
 }
 .sold-badge {
   color: #ff4757;
@@ -95,6 +96,7 @@ header p {
   border-radius: 8px;
   box-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
   letter-spacing: 2px;
+  user-select: none; /* ป้องกันการคลุมดำเวลาดับเบิ้ลคลิก */
 }
 .btn-sold {
   background: #7f8c8d;
@@ -482,18 +484,26 @@ function toggleFav(id){
  render();
 }
 
-function toggleSold(id) {
- if(solds.includes(id)) {
-   solds = solds.filter(x => x !== id);
- } else {
-   solds.push(id);
-   favorites = favorites.filter(x => x !== id);
-   compare = compare.filter(x => x !== id);
-   localStorage.setItem('favorites', JSON.stringify(favorites));
-   localStorage.setItem('compare', JSON.stringify(compare));
- }
- localStorage.setItem('solds', JSON.stringify(solds));
- render();
+// 🛠️ ปรับฟังก์ชันการทำ Sold และ Unlock 
+function setSold(id) {
+  if(!solds.includes(id)) {
+    solds.push(id);
+    // ลบออกจาก favorites และ compare ทันทีเมื่อห้องถูกขาย
+    favorites = favorites.filter(x => x !== id);
+    compare = compare.filter(x => x !== id);
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    localStorage.setItem('compare', JSON.stringify(compare));
+    localStorage.setItem('solds', JSON.stringify(solds));
+    render();
+  }
+}
+
+function unlockSold(id) {
+  if(solds.includes(id)) {
+    solds = solds.filter(x => x !== id);
+    localStorage.setItem('solds', JSON.stringify(solds));
+    render();
+  }
 }
 
 function render(){
@@ -513,8 +523,11 @@ function render(){
    const card=document.createElement('div');
    card.className='card';
    
-   const soldOverlayHTML = isSold ? `<div class="sold-overlay" onclick="toggleSold('${u.id}')"><div class="sold-badge">SOLD</div></div>` : '';
-   const soldButtonText = isSold ? 'Unlock' : 'Sold';
+   // 🛠️ ถ้า Sold แล้ว ให้แก้ event เป็น ondblclick (ดับเบิ้ลคลิก) เพื่อปลดบล็อก
+   const soldOverlayHTML = isSold ? `<div class="sold-overlay" ondblclick="unlockSold('${u.id}')"><div class="sold-badge">SOLD</div></div>` : '';
+   const soldButtonHTML = isSold 
+     ? `<button class="btn-sold" ondblclick="unlockSold('${u.id}')" style="padding: 10px 14px;" title="ดับเบิ้ลคลิกเพื่อปลดล็อก">Unlock</button>`
+     : `<button class="btn-sold" onclick="setSold('${u.id}')" style="padding: 10px 14px;">Sold</button>`;
 
    card.innerHTML=`
    <div class="card-img-box">
@@ -530,7 +543,7 @@ function render(){
      <div style="display:flex; gap:8px; margin-bottom:10px; margin-top:auto;">
        <button class="primary" style="flex:1" onclick="showUnit('${u.id}')" ${isSold ? 'disabled style="background:#b2bec3;"' : ''}>รายละเอียด</button>
        <button class="secondary" onclick="toggleFav('${u.id}')" ${isSold ? 'disabled style="background:#b2bec3;"' : ''}>${heartIcon}</button>
-       <button class="btn-sold" onclick="toggleSold('${u.id}')" style="padding: 10px 14px;">${soldButtonText}</button>
+       ${soldButtonHTML}
      </div>
      <label style="cursor:pointer; font-size:14px; color:#636e72; display:block; text-align:center; ${isSold ? 'pointer-events:none; color:#b2bec3;' : ''}">
        <input type="checkbox" ${compare.includes(u.id)?'checked':''} onchange="toggleCompare('${u.id}')" ${isSold ? 'disabled' : ''}> เปรียบเทียบห้องนี้
