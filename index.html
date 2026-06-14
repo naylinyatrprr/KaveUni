@@ -484,11 +484,37 @@ function toggleFav(id){
  render();
 }
 
-// 🛠️ ปรับฟังก์ชันการทำ Sold และ Unlock 
+// 🛠️ ฟังก์ชันเสริมสำหรับกดปุ่มสลับสถานะในหน้าต่างรายละเอียดห้องพัก
+function toggleFavFromModal(id) {
+  toggleFav(id);
+  updateModalButtons(id);
+}
+
+function toggleCompareFromModal(id) {
+  toggleCompare(id);
+  updateModalButtons(id);
+}
+
+function updateModalButtons(id) {
+  const modalActionBox = document.getElementById('modalActionBox');
+  if (modalActionBox) {
+    const isFav = favorites.includes(id);
+    const isCompare = compare.includes(id);
+    
+    document.getElementById('modalFavBtn').textContent = isFav ? '❤️ รายการโปรดแล้ว' : '🤍 เพิ่มในรายการโปรด';
+    document.getElementById('modalCompareBtn').textContent = isCompare ? '📊 เปรียบเทียบแล้ว' : '📊 เพิ่มเพื่อเปรียบเทียบ';
+    
+    if(isFav) document.getElementById('modalFavBtn').style.background = '#ffeaa7';
+    else document.getElementById('modalFavBtn').style.background = '#00cec9';
+
+    if(isCompare) document.getElementById('modalCompareBtn').style.background = '#a29bfe';
+    else document.getElementById('modalCompareBtn').style.background = '#6c5ce7';
+  }
+}
+
 function setSold(id) {
   if(!solds.includes(id)) {
     solds.push(id);
-    // ลบออกจาก favorites และ compare ทันทีเมื่อห้องถูกขาย
     favorites = favorites.filter(x => x !== id);
     compare = compare.filter(x => x !== id);
     localStorage.setItem('favorites', JSON.stringify(favorites));
@@ -523,7 +549,6 @@ function render(){
    const card=document.createElement('div');
    card.className='card';
    
-   // 🛠️ ถ้า Sold แล้ว ให้แก้ event เป็น ondblclick (ดับเบิ้ลคลิก) เพื่อปลดบล็อก
    const soldOverlayHTML = isSold ? `<div class="sold-overlay" ondblclick="unlockSold('${u.id}')"><div class="sold-badge">SOLD</div></div>` : '';
    const soldButtonHTML = isSold 
      ? `<button class="btn-sold" ondblclick="unlockSold('${u.id}')" style="padding: 10px 14px;" title="ดับเบิ้ลคลิกเพื่อปลดล็อก">Unlock</button>`
@@ -561,6 +586,14 @@ function showUnit(id){
  let highlightHTML = '';
  u.highlights.forEach(text => { highlightHTML += `<li>${text}</li>`; });
 
+ // ตรวจสอบสถานะ ณ ปัจจุบันเพื่อตั้งค่าปุ่มเริ่มต้นใน Modal
+ const isFav = favorites.includes(id);
+ const isCompare = compare.includes(id);
+ const favText = isFav ? '❤️ รายการโปรดแล้ว' : '🤍 เพิ่มในรายการโปรด';
+ const compareText = isCompare ? '📊 เปรียบเทียบแล้ว' : '📊 เพิ่มเพื่อเปรียบเทียบ';
+ const favBg = isFav ? '#ffeaa7' : '#00cec9';
+ const compareBg = isCompare ? '#a29bfe' : '#6c5ce7';
+
  document.getElementById('detail').innerHTML=`
    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; background:#f9f9f9; padding:15px; border-radius:10px;">
      <div><strong>ประเภท:</strong> ${u.type}</div>
@@ -572,6 +605,11 @@ function showUnit(id){
    
    <div class="highlight-title">🎯 จุดเด่นเฉพาะห้องนี้:</div>
    <ul class="highlight-list">${highlightHTML}</ul>
+   
+   <div id="modalActionBox" style="display:flex; gap:10px; margin-top:20px; padding-top:15px; border-top:1px dashed #eee;">
+     <button id="modalFavBtn" class="secondary" style="flex:1; background:${favBg}; color:#2d3436;" onclick="toggleFavFromModal('${u.id}')">${favText}</button>
+     <button id="modalCompareBtn" class="primary" style="flex:1; background:${compareBg};" onclick="toggleCompareFromModal('${u.id}')">${compareText}</button>
+   </div>
  `;
  document.getElementById('modal').style.display='block';
 }
