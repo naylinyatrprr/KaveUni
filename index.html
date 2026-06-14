@@ -152,13 +152,147 @@ button { padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; 
 .placeholder { width: 100%; max-height: 380px; background: #eee; border-radius: 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
 .placeholder img { width: 100%; height: 100%; object-fit: cover; }
 
-.summary-list { margin: 15px 0; padding: 0 5px 0 0; list-style: none; max-height: 350px; overflow-y: auto; }
+/* 🛠️ แก้ไขสไตล์ของกล่องข้อความป๊อปอัปสรุปให้อ่านง่ายและคำนวณความสูงให้ยืดหยุ่นพอดียึดตามขนาดหน้าจอ */
+.summary-modal-box {
+  background: white;
+  width: min(600px, 95%);
+  margin: 4vh auto;
+  padding: 25px;
+  border-radius: 20px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+.summary-list { 
+  margin: 15px 0; 
+  padding: 0 8px 0 0; 
+  list-style: none; 
+  flex-grow: 1;
+  overflow-y: auto; 
+}
 .summary-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
 .highlight-title { color: #6c5ce7; font-weight: bold; margin-top: 18px; font-size: 1.1rem; }
 .highlight-list { margin: 8px 0 0 0; padding-left: 20px; color: #4a5568; line-height: 1.6; }
 
 .summary-price-box { font-size: 13px; margin-top: 6px; color: #718096; }
 .summary-sale-price { color: #ff4757; font-weight: bold; }
+
+/* 🛠️ สไตล์เพิ่มเติมสำหรับระบบแท็บ (Tabs Navbar) */
+.sales-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 10px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  backdrop-filter: blur(4px);
+}
+.tab-btn {
+  flex: 1;
+  padding: 12px 20px;
+  font-size: 1rem;
+  border-radius: 12px;
+  background: transparent;
+  color: #4a5568;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+.tab-btn:hover {
+  background: rgba(108, 92, 231, 0.1);
+  color: #6c5ce7;
+}
+.tab-btn.active {
+  background: linear-gradient(135deg, #6c5ce7, #8e2de2);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+.gallery-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+}
+.gallery-item {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+  background: #fff;
+  cursor: pointer; /* เพิ่มเพื่อให้รู้ว่าคลิกดูรูปใหญ่ได้ */
+}
+.gallery-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+.gallery-item img:hover {
+  transform: scale(1.02);
+}
+.gallery-title {
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #4a5568;
+  text-align: center;
+  background: #f8f9fa;
+  border-top: 1px solid #eee;
+}
+
+/* 🛠️ สไตล์สำหรับโมดอลขยายรูปใหญ่ (Image Zoom Lightbox) */
+#imageZoomModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  backdrop-filter: blur(8px);
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+.zoom-container {
+  max-width: 95%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#zoomedImg {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain; /* ปรับให้พอดีกับหน้าจอ ไม่โดนตัดขอบ */
+  border-radius: 8px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  animation: zoomAnimation 0.25s ease-out;
+}
+#zoomCaption {
+  color: #fff;
+  margin-top: 15px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+@keyframes zoomAnimation {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
 </style>
 </head>
 <body>
@@ -169,14 +303,86 @@ button { padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; 
 </header>
 
 <div class="container">
-  <div class="stats">
-    <div class="stat clickable" onclick="showSummary('available')">🏢 ห้องว่างทั้งหมด: <span id="availableCount">0</span></div>
-    <div class="stat clickable" onclick="showSummary('compare')">📊 Compare: <span id="compareCount">0</span></div>
-    <div class="stat clickable" onclick="showSummary('favorites')">❤️ Favorites: <span id="favCount">0</span></div>
+  <div class="sales-tabs">
+    <button class="tab-btn active" onclick="switchTab(event, 'unitsTab')">🏢 ยูนิตห้องพัก</button>
+    <button class="tab-btn" onclick="switchTab(event, 'projectTab')">✨ รายละเอียดโครงการ</button>
+    <button class="tab-btn" onclick="switchTab(event, 'floorplanTab')">📐 Floor Plan & Room Plan</button>
   </div>
 
-  <h2 style="color: #2d3436; border-left: 5px solid #6c5ce7; padding-left: 15px;">Available Units</h2>
-  <div class="grid" id="units"></div>
+  <div id="unitsTab" class="tab-content active">
+    <div class="stats">
+      <div class="stat clickable" onclick="showSummary('available')">🏢 ห้องว่างทั้งหมด: <span id="availableCount">0</span></div>
+      <div class="stat clickable" onclick="showSummary('compare')">📊 Compare: <span id="compareCount">0</span></div>
+      <div class="stat clickable" onclick="showSummary('favorites')">❤️ Favorites: <span id="favCount">0</span></div>
+    </div>
+
+    <h2 style="color: #2d3436; border-left: 5px solid #6c5ce7; padding-left: 15px;">Available Units</h2>
+    <div class="grid" id="units"></div>
+  </div>
+
+  <div id="projectTab" class="tab-content">
+    <h2 style="color: #2d3436; border-left: 5px solid #6c5ce7; padding-left: 15px; margin-bottom: 20px;">รายละเอียดโครงการ</h2>
+    <div class="gallery-layout">
+      <div class="gallery-item" onclick="openImageZoom(this)">
+        <img src="https://onlinebooking.assetwise.co.th/Resources/PDC002/ProjectSectionMainPage/Project-Detail.jpg?ver=639170294302320025" alt="รายละเอียดโครงการ KAVE Universe">
+        <div class="gallery-title">รายละเอียดโครงการ KAVE Universe</div>
+      </div>
+      <div class="gallery-item" onclick="openImageZoom(this)">
+        <img src="https://onlinebooking.assetwise.co.th/Resources/PDC002/ProjectSectionMainPage/Facilities-Detail.jpg?ver=639170294302320025" alt="พื้นที่ส่วนกลาง KAVE Universe">
+        <div class="gallery-title">พื้นที่ส่วนกลาง KAVE Universe</div>
+      </div>
+      <div class="gallery-item" onclick="openImageZoom(this)">
+        <img src="https://onlinebooking.assetwise.co.th/Resources/PDC002/Gallery/28_Map2.jpg" alt="สถานที่สำคัญใกล้เคียง">
+        <div class="gallery-title">สถานที่สำคัญใกล้เคียง 1</div>
+      </div>
+      <div class="gallery-item" onclick="openImageZoom(this)">
+        <img src="https://onlinebooking.assetwise.co.th/Resources/PDC002/Gallery/27_Map1.jpg" alt="แผนที่ตั้งโครงการ">
+        <div class="gallery-title">แผนที่ตั้งโครงการ</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="floorplanTab" class="tab-content">
+    <h2 style="color: #2d3436; border-left: 5px solid #6c5ce7; padding-left: 15px; margin-bottom: 20px;">Floor Plan & Room Plan</h2>
+    <div class="gallery-layout">
+      <div class="gallery-item" onclick="openImageZoom(this)">
+        <img src="https://img2.pic.in.th/1-Bedroom-Plus-34---35-SQ.M..jpg" alt="1. แบบห้อง 1 Bedroom Plus">
+        <div class="gallery-title">1. แบบห้อง 1 Bedroom Plus</div>
+      </div>
+      <div class="gallery-item" onclick="openImageZoom(this)">
+        <img src="https://onlinebooking.assetwise.co.th/Resources/PDC002/Gallery/16_RoomType_C.jpg" alt="2. แบบห้อง 1 Bedroom Extra">
+        <div class="gallery-title">2. แบบห้อง 1 Bedroom Extra</div>
+      </div>
+      <div class="gallery-item" onclick="openImageZoom(this)">
+        <img src="https://onlinebooking.assetwise.co.th/Resources/PDC002/FloorPlan/2ND-ROOF-FLOOR-PLAN.jpg" alt="Floor Plan ชั้น 2">
+        <div class="gallery-title">Floor Plan ชั้น 2</div>
+      </div>
+      <div class="gallery-item" onclick="openImageZoom(this)">
+        <img src="https://onlinebooking.assetwise.co.th/Resources/PDC002/FloorPlan/3RD-ROOF-FLOOR-PLAN.jpg" alt="Floor Plan ชั้น 3">
+        <div class="gallery-title">Floor Plan ชั้น 3</div>
+      </div>
+      <div class="gallery-item" onclick="openImageZoom(this)">
+        <img src="https://onlinebooking.assetwise.co.th/Resources/PDC002/FloorPlan/4TH-ROOF-FLOOR-PLAN.jpg" alt="Floor Plan ชั้น 4">
+        <div class="gallery-title">Floor Plan ชั้น 4</div>
+      </div>
+      <div class="gallery-item" onclick="openImageZoom(this)">
+        <img src="https://onlinebooking.assetwise.co.th/Resources/PDC002/FloorPlan/5TH-ROOF-FLOOR-PLAN.jpg" alt="Floor Plan ชั้น 5">
+        <div class="gallery-title">Floor Plan ชั้น 5</div>
+      </div>
+      <div class="gallery-item" onclick="openImageZoom(this)">
+        <img src="https://onlinebooking.assetwise.co.th/Resources/PDC002/FloorPlan/6TH-ROOF-FLOOR-PLAN.jpg" alt="Floor Plan ชั้น 6">
+        <div class="gallery-title">Floor Plan ชั้น 6</div>
+      </div>
+      <div class="gallery-item" onclick="openImageZoom(this)">
+        <img src="https://onlinebooking.assetwise.co.th/Resources/PDC002/FloorPlan/7TH-ROOF-FLOOR-PLAN.jpg" alt="Floor Plan ชั้น 7">
+        <div class="gallery-title">Floor Plan ชั้น 7</div>
+      </div>
+      <div class="gallery-item" onclick="openImageZoom(this)">
+        <img src="https://onlinebooking.assetwise.co.th/Resources/PDC002/FloorPlan/8TH-ROOF-FLOOR-PLAN.jpg" alt="Floor Plan ชั้น 8">
+        <div class="gallery-title">Floor Plan ชั้น 8</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div id="modal">
@@ -192,31 +398,64 @@ button { padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; 
 </div>
 
 <div id="summaryModal">
-  <div class="modal-content" style="max-width: 500px;">
-    <h2 id="summaryTitle"></h2>
+  <div class="summary-modal-box">
+    <h2 id="summaryTitle" style="margin-top: 0; margin-bottom: 10px;"></h2>
     <ul id="summaryList" class="summary-list"></ul>
-    <button class="primary" style="width: 100%;" onclick="closeSummaryModal()">ปิดหน้าต่าง</button>
+    <button class="primary" style="width: 100%; margin-top: auto; padding: 12px;" onclick="closeSummaryModal()">ปิดหน้าต่าง</button>
+  </div>
+</div>
+
+<div id="imageZoomModal" onclick="closeImageZoom()">
+  <div class="zoom-container">
+    <img id="zoomedImg" src="" alt="Zoomed Image">
+    <div id="zoomCaption"></div>
   </div>
 </div>
 
 <script>
+function switchTab(evt, tabName) {
+  const tabcontents = document.getElementsByClassName("tab-content");
+  for (let i = 0; i < tabcontents.length; i++) {
+    tabcontents[i].classList.remove("active");
+  }
+  const tabbtns = document.getElementsByClassName("tab-btn");
+  for (let i = 0; i < tabbtns.length; i++) {
+    tabbtns[i].classList.remove("active");
+  }
+  document.getElementById(tabName).classList.add("active");
+  evt.currentTarget.classList.add("active");
+}
+
+function openImageZoom(element) {
+  const imgSource = element.querySelector('img').src;
+  const imgAlt = element.querySelector('img').alt;
+  
+  document.getElementById('zoomedImg').src = imgSource;
+  document.getElementById('zoomCaption').textContent = imgAlt;
+  document.getElementById('imageZoomModal').style.display = 'flex';
+}
+
+function closeImageZoom() {
+  document.getElementById('imageZoomModal').style.display = 'none';
+}
+
 const units=[
-{id:'A228  51/78',type:'1 Bedroom Plus',size:'34.64 sqm',floor:2,price:'3.362 MB',sale:'2.69* MB', highlights:['ทิศตะวันตกเฉียงเหนือ ลมเข้า','มองเห็นพื้นที่สีเขียว','มีต้นไม้ให้ความร่มรื่น ไม่ปะทะแดดจัด','ตำแหน่งไม่ใกล้ไม่ไกล Lift เดินสะดวก']},
-{id:'A227  51/77',type:'1 Bedroom Plus',size:'34.64 sqm',floor:2,price:'3.455 MB',sale:'2.69* MB', highlights:['ทิศตะวันตกเฉียงเหนือ ลมเข้า','มองเห็นพื้นที่สีเขียว','มีต้นไม้ให้ความร่มรื่น ไม่ปะทะแดดจัด','ตำแหน่งไม่ใกล้ไม่ไกล Lift สะดวก']},
-{id:'A223  51/73',type:'1 Bedroom Extra',size:'28.30 sqm',floor:2,price:'3.115 MB',sale:'2.39 MB', highlights:['ทิศตะวันตกเฉียงเหนือ','ราคาเริ่มต้นคุ้มที่สุดในโครงการ','ห้องแต่งครบ! พร้อมอยู่','ใช้ผนังร่วมกับเพื่อนบ้านเพียงฝั่งเดียว ฝั่งบันไดหนีไฟ กำแพงหนาสองเท่า!']},
-{id:'A209  51/59',type:'1 Bedroom Extra',size:'33.90 sqm',floor:2,price:'3.58 MB',sale:'2.49* MB', highlights:['ทิศตะวันออก','แดดเช้า ไม่ร้อนยามบ่าย','พื้นที่ห้องนั่งเล่นกว้าง วางโต๊ะคอมฯ เพิ่มได้สบาย','มีห้องเก็บของส่วนตัว']},
-{id:'A409  51/129',type:'1 Bedroom Extra',size:'33.90 sqm',floor:4,price:'3.58 MB',sale:'2.99* MB', highlights:['ทิศตะวันออก ชั้นสูงกำลังดี','แดดเช้า ไม่ร้อนยามบ่าย','พื้นที่ห้องนั่งเล่นกว้าง วางโต๊ะคอมฯ เพิ่มได้สบาย','มีห้องเก็บของส่วนตัว']},
-{id:'A426  51/146',type:'1 Bedroom Extra',size:'28.10 sqm',floor:4,price:'3.34 MB',sale:'2.39* MB', highlights:['ทิศตะวันตกเฉียงเหนือ','วิวสวนที่สุดใน โครงการ สระว่ายน้ำสไตล์รีสอร์ต','เหมือนพักผ่อนในโรงแรมหรู']},
-{id:'A509  51/164',type:'1 Bedroom Extra',size:'33.90 sqm',floor:5,price:'3.58 MB',sale:'2.79 MB', highlights:['ทิศตะวันออก','แดดเช้า ไม่ร้อนยามบ่าย','ชั้น 5 วิวเปิดโล่งพ้นระยะหลังคาตึกรอบๆ','พื้นที่ห้องนั่งเล่นกว้าง วางโต๊ะคอมฯ เพิ่มได้สบาย','มีห้องเก็บของส่วนตัว']},
-{id:'A526  51/181',type:'1 Bedroom Extra',size:'28.10 sqm',floor:5,price:'3.34 MB',sale:'2.59* MB', highlights:['ทิศตะวันตกเฉียงเหนือ','วิวมองเห็นสระว่ายน้ำและสวนส่วนกลาง ','ลมเข้า อากาศถ่ายเทตลอดทั้งปี']},
-{id:'A609  51/199',type:'1 Bedroom Extra',size:'33.90 sqm',floor:6,price:'3.58 MB',sale:'2.59* MB', highlights:['ทิศตะวันออก ชั้นสูงกำลังดี','แดดเช้า ไม่ร้อนยามบ่าย','พื้นที่ห้องนั่งเล่นกว้าง วางโต๊ะคอมฯ เพิ่มได้สบาย','มีห้องเก็บของส่วนตัว']},
-{id:'A709  51/234',type:'1 Bedroom Extra',size:'33.90 sqm',floor:7,price:'3.58 MB',sale:'2.59* MB', highlights:['ทิศตะวันออก ชั้นสูงกำลังดี','แดดเช้า ไม่ร้อนยามบ่าย','พื้นที่ห้องนั่งเล่นกว้าง วางโต๊ะคอมฯ เพิ่มได้สบาย','มีห้องเก็บของส่วนตัว']},
-{id:'A809  51/269',type:'1 Bedroom Extra',size:'33.90 sqm',floor:8,price:'3.58 MB',sale:'2.59* MB', highlights:['ทิศตะวันออก','ชั้นสูงสุด (Top Floor) ไม่มีเสียงรบกวนจากชั้นบนแน่นอน','ทิศตะวันออก ชั้นสูงกำลังดี','แดดเช้า ไม่ร้อนยามบ่าย','พื้นที่ห้องนั่งเล่นกว้าง วางโต๊ะคอมฯ เพิ่มได้สบาย','มีห้องเก็บของส่วนตัว']},
-{id:'A821  51/281',type:'1 Bedroom Extra',size:'33.30 sqm',floor:8,price:'3.58 MB',sale:'2.59* MB', highlights:['ห้องทิศเหนือ ห้องสุดท้ายในโครงการ!','วิวสวนลอยฟ้า สระว่ายน้ำ มุมดีที่สุด','ชั้นสูงสุด (Top Floor) ไม่มีเสียงรบกวนจากชั้นบนแน่นอน','ห้องมุม เป็นส่วนตัวที่สุด!']},
-{id:'A823  51/283',type:'1 Bedroom Extra',size:'28.30 sqm',floor:8,price:'3.34 MB',sale:'2.49* MB', highlights:['ทิศตะวันตกเฉียงเหนือ ','ชั้น 8 (Top Floor) วิวเทพในราคาห้องไซส์เริ่มต้น','ลมเย็น อากาศถ่ายเทตลอดทั้งปี','walk in closet ตู้เสื้อผ้าขนาดใหญ่']},
-{id:'A827  51/287',type:'1 Bedroom Plus',size:'35.15 sqm',floor:8,price:'3.81 MB',sale:'2.69 MB', highlights:['ทิศตะวันตกเฉียงเหนือ','ห้อง Plus ขนาดใหญ่ที่สุดบนชั้นสูงสุด','ห้องอเนกประสงค์ปรับเป็นห้องทำงาน Work from Home ได้','วิวสระวิวสวนวิวเมือง ครบจบในห้องเดียว']},
-{id:'A828  51/288',type:'1 Bedroom Plus',size:'35.15 sqm',floor:8,price:'3.81 MB',sale:'2.69 MB', highlights:['ทิศตะวันตกเฉียงเหนือ','ห้อง Plus ขนาดใหญ่ที่สุดบนชั้นสูงสุด','ห้องอเนกประสงค์ปรับเป็นห้องทำงาน Work from Home ได้','วิวสระวิวสวนวิวเมือง ครบจบในห้องเดียว']},
-{id:'A829  51/289',type:'1 Bedroom Extra',size:'28.44 sqm',floor:8,price:'3.34 MB',sale:'2.49* MB', highlights:['ทิศตะวันตกเฉียงเหนือ','ชั้น 8 ราคาปิดดีลพิเศษ ดึงดูดผู้เช่าง่าย','ระเบียงกว้างซักล้างสะดวก','ใกล้ลิฟต์ เดินไม่ไกล']}
+{id:'A228-51/78',type:'1 Bedroom Plus',size:'35.15 sqm',floor:2,price:'3.29 MB',sale:'2.69* MB', highlights:['ทิศตะวันตกเฉียงเหนือ ลมเข้า','มองเห็นพื้นที่สีเขียว','มีต้นไม้ให้ความร่มรื่น ไม่ปะทะแดดจัด','ตำแหน่งไม่ใกล้ไม่ไกล Lift เดินสะดวก']},
+{id:'A227-51/77',type:'1 Bedroom Plus',size:'35.15 sqm',floor:2,price:'3.29 MB',sale:'2.69* MB', highlights:['ทิศตะวันตกเฉียงเหนือ ลมเข้า','มองเห็นพื้นที่สีเขียว','มีต้นไม้ให้ความร่มรื่น ไม่ปะทะแดดจัด','ตำแหน่งไม่ใกล้ไม่ไกล Lift เดินสะดวก']},
+{id:'A223-51/73',type:'1 Bedroom Extra',size:'28.78 sqm',floor:2,price:'2.99 MB',sale:'2.39 MB', highlights:['ทิศตะวันตกเฉียงเหนือ','ราคาเริ่มต้นคุ้มที่สุดในโครงการ','ห้องแต่งครบ! พร้อมอยู่','ใช้ผนังร่วมกับเพื่อนบ้านเพียงฝั่งเดียว ฝั่งบันไดหนีไฟ กำแพงหนาสองเท่า!']},
+{id:'A209-51/59',type:'1 Bedroom Extra',size:'34.64 sqm',floor:2,price:'3.09 MB',sale:'2.49* MB', highlights:['ทิศตะวันออก','แดดเช้า ไม่ร้อนยามบ่าย','พื้นที่ห้องนั่งเล่นกว้าง วางโต๊ะคอมฯ เพิ่มได้สบาย','มีห้องเก็บของส่วนตัว']},
+{id:'A409-51/129',type:'1 Bedroom Extra',size:'34.64 sqm',floor:4,price:'3.50 MB',sale:'2.99* MB', highlights:['ทิศตะวันออก ชั้นสูงกำลังดี','แดดเช้า ไม่ร้อนยามบ่าย','พื้นที่ห้องนั่งเล่นกว้าง วางโต๊ะคอมฯ เพิ่มได้สบาย','มีห้องเก็บของส่วนตัว']},
+{id:'A426-51/146',type:'1 Bedroom Extra',size:'28.44 sqm',floor:4,price:'2.89 MB',sale:'2.39* MB', highlights:['ทิศตะวันตกเฉียงเหนือ','วิวสวนที่สุดใน โครงการ สระว่ายน้ำสไตล์รีสอร์ต','เหมือนพักผ่อนในโรงแรมหรู']},
+{id:'A509-51/164',type:'1 Bedroom Extra',size:'34.64 sqm',floor:5,price:'3.49 MB',sale:'2.79 MB', highlights:['ทิศตะวันออก','แดดเช้า ไม่ร้อนยามบ่าย','ชั้น 5 วิวเปิดโล่งพ้นระยะหลังคาตึกรอบๆ','พื้นที่ห้องนั่งเล่นกว้าง วางโต๊ะคอมฯ เพิ่มได้สบาย','มีห้องเก็บของส่วนตัว']},
+{id:'A526-51/181',type:'1 Bedroom Extra',size:'28.44 sqm',floor:5,price:'3.09 MB',sale:'2.59* MB', highlights:['ทิศตะวันตกเฉียงเหนือ','วิวมองเห็นสระว่ายน้ำและสวนส่วนกลาง ','ลมเข้า อากาศถ่ายเทตลอดทั้งปี']},
+{id:'A609-51/199',type:'1 Bedroom Extra',size:'34.64 sqm',floor:6,price:'3.19 MB',sale:'2.59* MB', highlights:['ทิศตะวันออก ชั้นสูงกำลังดี','แดดเช้า ไม่ร้อนยามบ่าย','พื้นที่ห้องนั่งเล่นกว้าง วางโต๊ะคอมฯ เพิ่มได้สบาย','มีห้องเก็บของส่วนตัว']},
+{id:'A709-51/234',type:'1 Bedroom Extra',size:'34.64 sqm',floor:7,price:'3.19 MB',sale:'2.59* MB', highlights:['ทิศตะวันออก ชั้นสูงกำลังดี','แดดเช้า ไม่ร้อนยามบ่าย','พื้นที่ห้องนั่งเล่นกว้าง วางโต๊ะคอมฯ เพิ่มได้สบาย','มีห้องเก็บของส่วนตัว']},
+{id:'A809-51/269',type:'1 Bedroom Extra',size:'34.64 sqm',floor:8,price:'3.19 MB',sale:'2.59* MB', highlights:['ทิศตะวันออก','ชั้นสูงสุด (Top Floor) ไม่มีเสียงรบกวนจากชั้นบนแน่นอน','ทิศตะวันออก ชั้นสูงกำลังดี','แดดเช้า ไม่ร้อนยามบ่าย','พื้นที่ห้องนั่งเล่นกว้าง วางโต๊ะคอมฯ เพิ่มได้สบาย','มีห้องเก็บของส่วนตัว']},
+{id:'A821-51/281',type:'1 Bedroom Extra',size:'33.71 sqm',floor:8,price:'3.19 MB',sale:'2.59* MB', highlights:['ห้องทิศเหนือ ห้องสุดท้ายในโครงการ!','วิวสวนลอยฟ้า สระว่ายน้ำ มุมดีที่สุด','ชั้นสูงสุด (Top Floor) ไม่มีเสียงรบกวนจากชั้นบนแน่นอน','ห้องมุม เป็นส่วนตัวที่สุด!']},
+{id:'A823-51/283',type:'1 Bedroom Extra',size:'28.78 sqm',floor:8,price:'3.19 MB',sale:'2.49* MB', highlights:['ทิศตะวันตกเฉียงเหนือ ','ชั้น 8 (Top Floor) วิวเทพในราคาห้องไซส์เริ่มต้น','ลมเย็น อากาศถ่ายเทตลอดทั้งปี','walk in closet ตู้เสื้อผ้าขนาดใหญ่']},
+{id:'A827-51/287',type:'1 Bedroom Plus',size:'35.15 sqm',floor:8,price:'3.39 MB',sale:'2.69 MB', highlights:['ทิศตะวันตกเฉียงเหนือ','ห้อง Plus ขนาดใหญ่ที่สุดบนชั้นสูงสุด','ห้องอเนกประสงค์ปรับเป็นห้องทำงาน Work from Home ได้','วิวสระวิวสวนวิวเมือง ครบจบในห้องเดียว']},
+{id:'A828-51/288',type:'1 Bedroom Plus',size:'35.15 sqm',floor:8,price:'3.39 MB',sale:'2.69 MB', highlights:['ทิศตะวันตกเฉียงเหนือ','ห้อง Plus ขนาดใหญ่ที่สุดบนชั้นสูงสุด','ห้องอเนกประสงค์ปรับเป็นห้องทำงาน Work from Home ได้','วิวสระวิวสวนวิวเมือง ครบจบในห้องเดียว']},
+{id:'A829-51/289',type:'1 Bedroom Extra',size:'28.44 sqm',floor:8,price:'2.99 MB',sale:'2.49* MB', highlights:['ทิศตะวันตกเฉียงเหนือ','ชั้น 8 ราคาปิดดีลพิเศษ ดึงดูดผู้เช่าง่าย','ระเบียงกว้างซักล้างสะดวก','ใกล้ลิฟต์ เดินไม่ไกล']}
 ];
 
 const roomGallery = {
@@ -227,7 +466,7 @@ const roomGallery = {
 
 let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 let compare = JSON.parse(localStorage.getItem('compare')) || [];
-let solds = JSON.parse(localStorage.getItem('solds')) || []; // เก็บสถานะห้องที่ขายแล้ว
+let solds = JSON.parse(localStorage.getItem('solds')) || [];
 
 function toggleCompare(id) {
  if(compare.includes(id)) compare=compare.filter(x=>x!==id);
@@ -243,13 +482,11 @@ function toggleFav(id){
  render();
 }
 
-// ฟังก์ชันเปิด/ปิดสถานะ Sold และคำนวณยอดห้องว่างใหม่
 function toggleSold(id) {
  if(solds.includes(id)) {
    solds = solds.filter(x => x !== id);
  } else {
    solds.push(id);
-   // ถ้าห้องนั้นติดดิวโปรดหรือเปรียบเทียบอยู่ให้เอาออกทันทีเมื่อขายแล้ว
    favorites = favorites.filter(x => x !== id);
    compare = compare.filter(x => x !== id);
    localStorage.setItem('favorites', JSON.stringify(favorites));
@@ -259,9 +496,7 @@ function toggleSold(id) {
  render();
 }
 
-// 🛠️ อัปเดตฟังก์ชันเรนเดอร์ให้ดึงรูปมาแปะที่หัวการ์ดของแต่ละห้องแบบเรียลไทม์
 function render(){
- // คำนวณห้องว่างโดยเอาจำนวนยูนิตทั้งหมดหักลบห้องที่ Sold ออกไป
  const availableUnitsCount = units.length - solds.length;
  document.getElementById('availableCount').textContent=availableUnitsCount;
  document.getElementById('favCount').textContent=favorites.length;
@@ -272,13 +507,12 @@ function render(){
 
  units.forEach(u=>{
    const heartIcon = favorites.includes(u.id) ? '❤️' : '🤍';
-   const imageUrl = roomGallery[u.type] || roomGallery['default']; // ดึงลิงก์รูปภาพตามประเภทห้อง
+   const imageUrl = roomGallery[u.type] || roomGallery['default'];
    const isSold = solds.includes(u.id);
    
    const card=document.createElement('div');
    card.className='card';
    
-   // ตรวจสอบเงื่อนไขว่าถ้า Sold ให้สร้างม่าน Overlay สีแดงทับรูปภาพ
    const soldOverlayHTML = isSold ? `<div class="sold-overlay" onclick="toggleSold('${u.id}')"><div class="sold-badge">SOLD</div></div>` : '';
    const soldButtonText = isSold ? 'Unlock' : 'Sold';
 
@@ -341,7 +575,6 @@ function showSummary(type) {
     if (type === 'favorites') { targetArray = favorites; title.textContent = '❤️ รายการโปรด'; }
     else if (type === 'compare') { targetArray = compare; title.textContent = '📊 เปรียบเทียบห้อง'; }
     else if (type === 'available') { 
-        // สรุปห้องว่างทั้งหมดจะนับเฉพาะห้องที่ไม่ได้ถูกกด Sold เท่านั้นตามเงื่อนไข
         targetArray = units.map(u => u.id).filter(id => !solds.includes(id)); 
         title.textContent = '🏢 ห้องว่างทั้งหมด'; 
     }
