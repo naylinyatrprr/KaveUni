@@ -42,23 +42,21 @@ header p {
 
 .container { padding: 30px 20px; }
 
-/* 🛠️ ปรับการ์ดให้รองรับรูปภาพด้านบน และซ่อนส่วนที่เกินขอบ */
 .card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(108, 92, 231, 0.1);
   backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  overflow: hidden; /* บังคับให้รูปภาพโค้งตามขอบการ์ด */
+  overflow: hidden; 
   display: flex;
   flex-direction: column;
-  position: relative; /* เพิ่มเพื่อรองรับการแปะป้าย Sold */
+  position: relative; 
 }
 
-/* 🛠️ เพิ่มสไตล์สำหรับจัดการรูปภาพบนหน้าการ์ด */
 .card-img-box {
   width: 100%;
-  height: 160px; /* กำหนดความสูงให้พอดี ไม่แย่งพื้นที่ข้อมูล */
+  height: 160px; 
   overflow: hidden;
   background: #eee;
   position: relative;
@@ -66,14 +64,13 @@ header p {
 .card-img-box img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* จัดรูปภาพให้เต็มกรอบสัดส่วนไม่เพี้ยน */
+  object-fit: cover; 
   transition: transform 0.3s ease;
 }
 .card:hover .card-img-box img {
-  transform: scale(1.05); /* เอฟเฟกต์ซูมรูปภาพเบาๆ เมื่อเอาเมาส์ไปชี้ */
+  transform: scale(1.05); 
 }
 
-/* สไตล์ป้ายและปุ่ม Sold แดงๆ ชัดๆ ตามบรีฟ */
 .sold-overlay {
   position: absolute;
   inset: 0;
@@ -96,7 +93,7 @@ header p {
   border-radius: 8px;
   box-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
   letter-spacing: 2px;
-  user-select: none; /* ป้องกันการคลุมดำเวลาดับเบิ้ลคลิก */
+  user-select: none; 
 }
 .btn-sold {
   background: #7f8c8d;
@@ -181,7 +178,6 @@ button { padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; 
 .summary-price-box { font-size: 13px; margin-top: 6px; color: #718096; }
 .summary-sale-price { color: #ff4757; font-weight: bold; }
 
-/* 🛠️ สไตล์เพิ่มเติมสำหรับระบบแท็บ (Tabs Navbar) */
 .sales-tabs {
   display: flex;
   gap: 10px;
@@ -233,7 +229,7 @@ button { padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; 
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   overflow: hidden;
   background: #fff;
-  cursor: pointer; /* เพิ่มเพื่อให้รู้ว่าคลิกดูรูปใหญ่ได้ */
+  cursor: pointer; 
 }
 .gallery-item img {
   width: 100%;
@@ -255,7 +251,6 @@ button { padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; 
   border-top: 1px solid #eee;
 }
 
-/* 🛠️ สไตล์สำหรับโมดอลขยายรูปใหญ่ (Image Zoom Lightbox) */
 #imageZoomModal {
   display: none;
   position: fixed;
@@ -278,7 +273,7 @@ button { padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; 
 #zoomedImg {
   max-width: 100%;
   max-height: 80vh;
-  object-fit: contain; /* ปรับให้พอดีกับหน้าจอ ไม่โดนตัดขอบ */
+  object-fit: contain; 
   border-radius: 8px;
   box-shadow: 0 0 30px rgba(0,0,0,0.5);
   animation: zoomAnimation 0.25s ease-out;
@@ -484,7 +479,7 @@ function toggleFav(id){
  render();
 }
 
-// 🛠️ ฟังก์ชันเสริมสำหรับกดปุ่มสลับสถานะในหน้าต่างรายละเอียดห้องพัก
+//
 function toggleFavFromModal(id) {
   toggleFav(id);
   updateModalButtons(id);
