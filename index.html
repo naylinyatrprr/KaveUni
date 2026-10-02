@@ -486,7 +486,6 @@ function toggleFav(id){
  render();
 }
 
-//
 function toggleFavFromModal(id) {
   toggleFav(id);
   updateModalButtons(id);
@@ -535,28 +534,28 @@ function unlockSold(id) {
 }
 
 function render(){
- const availableUnitsCount = units.length - solds.length;
- document.getElementById('availableCount').textContent=availableUnitsCount;
- document.getElementById('favCount').textContent=favorites.length;
- document.getElementById('compareCount').textContent=compare.length;
+ const availableUnits = units.filter(u => !solds.includes(u.id));
+ document.getElementById('availableCount').textContent = availableUnits.length;
+ document.getElementById('favCount').textContent = favorites.length;
+ document.getElementById('compareCount').textContent = compare.length;
 
- const el=document.getElementById('units');
- el.innerHTML='';
+ const el = document.getElementById('units');
+ el.innerHTML = '';
 
- units.forEach(u=>{
+ units.forEach(u => {
    const heartIcon = favorites.includes(u.id) ? '❤️' : '🤍';
    const imageUrl = roomGallery[u.type] || roomGallery['default'];
    const isSold = solds.includes(u.id);
    
-   const card=document.createElement('div');
-   card.className='card';
+   const card = document.createElement('div');
+   card.className = 'card';
    
    const soldOverlayHTML = isSold ? `<div class="sold-overlay" ondblclick="unlockSold('${u.id}')"><div class="sold-badge">SOLD</div></div>` : '';
    const soldButtonHTML = isSold 
      ? `<button class="btn-sold" ondblclick="unlockSold('${u.id}')" style="padding: 10px 14px;" title="ดับเบิ้ลคลิกเพื่อปลดล็อก">Unlock</button>`
      : `<button class="btn-sold" onclick="setSold('${u.id}')" style="padding: 10px 14px;">Sold</button>`;
 
-   card.innerHTML=`
+   card.innerHTML = `
    <div class="card-img-box">
      ${soldOverlayHTML}
      <img src="${imageUrl}" alt="${u.type}">
@@ -581,14 +580,13 @@ function render(){
 }
 
 function showUnit(id){
- const u=units.find(x=>x.id===id);
+ const u = units.find(x => x.id === id);
  document.getElementById('title').textContent = "รายละเอียด Unit " + id;
  document.getElementById('roomImg').src = roomGallery[u.type] || roomGallery['default'];
 
  let highlightHTML = '';
  u.highlights.forEach(text => { highlightHTML += `<li>${text}</li>`; });
 
- // ตรวจสอบสถานะ ณ ปัจจุบันเพื่อตั้งค่าปุ่มเริ่มต้นใน Modal
  const isFav = favorites.includes(id);
  const isCompare = compare.includes(id);
  const favText = isFav ? '❤️ รายการโปรดแล้ว' : '🤍 เพิ่มในรายการโปรด';
@@ -596,7 +594,7 @@ function showUnit(id){
  const favBg = isFav ? '#ffeaa7' : '#00cec9';
  const compareBg = isCompare ? '#a29bfe' : '#6c5ce7';
 
- document.getElementById('detail').innerHTML=`
+ document.getElementById('detail').innerHTML = `
    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; background:#f9f9f9; padding:15px; border-radius:10px;">
      <div><strong>ประเภท:</strong> ${u.type}</div>
      <div><strong>ขนาด:</strong> ${u.size}</div>
@@ -613,10 +611,10 @@ function showUnit(id){
      <button id="modalCompareBtn" class="primary" style="flex:1; background:${compareBg};" onclick="toggleCompareFromModal('${u.id}')">${compareText}</button>
    </div>
  `;
- document.getElementById('modal').style.display='block';
+ document.getElementById('modal').style.display = 'block';
 }
 
-function closeModal(){ document.getElementById('modal').style.display='none'; }
+function closeModal(){ document.getElementById('modal').style.display = 'none'; }
 
 function showSummary(type) {
     const modal = document.getElementById('summaryModal');
